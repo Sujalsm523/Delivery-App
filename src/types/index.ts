@@ -13,21 +13,37 @@ export interface UserProfile {
 }
 
 export type PackageStatus = 'pending' | 'assigned' | 'inTransit' | 'delivered' | 'cancelled';
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+export type FirestoreTimestamp = Date | { toDate: () => Date };
 
 export interface Package {
-  id: string;
+  id: string; // Firestore document ID
   senderId: string;
   senderEmail: string;
+  assignedVolunteerId: string | null;
+  assignedVolunteerEmail?: string; // Optional; present when assigned
+
   pickupLocation: string;
   deliveryLocation: string;
-  size: 'small' | 'medium' | 'large';
+
+  pickupCoords: Coordinates;
+  deliveryCoords: Coordinates;
+
+  size: "Small" | "Medium" | "Large";
+
   description: string;
-  status: PackageStatus;
-  createdAt: Date;
-  assignedVolunteerId?: string;
-  assignedVolunteerEmail?: string;
-  deliveryTime?: Date;
+
+  status: "pending" | "assigned" | "delivered";
+
+  createdAt: FirestoreTimestamp;
+  deliveryTime?: FirestoreTimestamp;
 }
+
+
 
 export interface AuthContextType {
   user: User | null;

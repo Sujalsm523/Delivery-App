@@ -17,22 +17,21 @@ function App() {
 
   // This effect handles navigation after login/logout
   useEffect(() => {
-    if (!loading && user && !user.isAnonymous && userProfile) {
-      // User is logged in, navigate them to their dashboard
-      if (userProfile.role === "recipient") {
-        setCurrentPage("recipientDashboard");
-      } else if (userProfile.role === "volunteer") {
-        setCurrentPage("volunteerDashboard");
-      } else if (userProfile.role === "storeAssociate") {
-        setCurrentPage("storeAssociateDashboard");
-      }
-    } else if (!loading && (!user || user.isAnonymous)) {
-      // User is not logged in or is anonymous, stay on auth pages or go home
-      if (currentPage !== "login" && currentPage !== "register") {
-        setCurrentPage("home");
-      }
+  if (loading) return;
+
+  if (user && !user.isAnonymous && userProfile) {
+    // Auto-redirect only from the home page
+    if (currentPage === "home") {
+      if (userProfile.role === "recipient") setCurrentPage("recipientDashboard");
+      else if (userProfile.role === "volunteer") setCurrentPage("volunteerDashboard");
+      else if (userProfile.role === "storeAssociate") setCurrentPage("storeAssociateDashboard");
     }
-  }, [user, userProfile, loading, currentPage]);
+  } else if (!user || user.isAnonymous) {
+    if (currentPage !== "login" && currentPage !== "register") {
+      setCurrentPage("home");
+    }
+  }
+}, [user, userProfile, loading, currentPage]);
 
   const renderPage = () => {
     if (loading) {

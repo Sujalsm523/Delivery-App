@@ -115,41 +115,51 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
             Revolutionizing delivery through community power, cutting-edge technology, and environmental responsibility
           </p>
           
-          {loading ? (
-            <div className="inline-flex items-center space-x-2 text-blue-200">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-              <span className="text-lg">Loading your personalized experience...</span>
-            </div>
-          ) : user && !user.isAnonymous ? (
-            <div className="space-y-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                <p className="text-2xl font-semibold text-blue-100 mb-4">
-                  Welcome back, {userProfile?.role}! 🎉
-                </p>
-                <Button 
-                  onClick={handleGoToDashboard}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-                >
-                  Access Your Dashboard →
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-              <Button 
-                onClick={() => setCurrentPage("login")}
-                className="bg-blue text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
-                Sign In to Continue
-              </Button>
-              <Button
-                onClick={() => setCurrentPage("register")}
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
-                Join Our Community 🚀
-              </Button>
-            </div>
-          )}
+          {(() => {
+            if (loading) {
+              return (
+                <div className="inline-flex items-center space-x-2 text-blue-200">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  <span className="text-lg">Loading your personalized experience...</span>
+                </div>
+              );
+            } else if (user && !user.isAnonymous) {
+              return (
+                <div className="space-y-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
+                    <p className="text-2xl font-semibold text-blue-100 mb-4">
+                      Welcome back, {userProfile?.role}! 🎉
+                    </p>
+                    <Button 
+  onClick={handleGoToDashboard}
+
+  className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+>
+  Access Your Dashboard →
+</Button>
+
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+                  <Button 
+                    onClick={() => setCurrentPage("login")}
+                    className="bg-blue text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Sign In to Continue
+                  </Button>
+                  <Button
+                    onClick={() => setCurrentPage("register")}
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Join Our Community 🚀
+                  </Button>
+                </div>
+              );
+            }
+          })()}
         </div>
       </section>
 
