@@ -10,6 +10,7 @@ import VolunteerDashboard from "./pages/VolunteerDashboard";
 import StoreAssociateDashboard from "./pages/StoreAssociateDashboard";
 import Card from "./components/Card";
 import { seedDatabase } from "./services/seedData";
+import "./App.css";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -45,9 +46,11 @@ function App() {
 
     switch (currentPage) {
       case "login":
-        return <LoginPage setCurrentPage={setCurrentPage} />;
+        return (
+          <LoginPage onSwitchToRegister={() => setCurrentPage("register")} />
+        );
       case "register":
-        return <RegisterPage setCurrentPage={setCurrentPage} />;
+        return <RegisterPage onSwitchToLogin={() => setCurrentPage("login")} />;
       case "recipientDashboard":
         return userProfile?.role === "recipient" ? (
           <RecipientDashboard />

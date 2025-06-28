@@ -1,0 +1,409 @@
+// import React from "react";
+// import Header from "../components/Header";
+// import Footer from "../components/Header";
+// import FadeIn from "../components/ui/FadeIn";
+// import HeroSection from "../components/sections/HeroSection";
+// import StatsSection from "../components/sections/StatsSection";
+// import { features, howItWorksSteps, testimonials } from "../data/Landingpage";
+// import { useAuth } from "../hooks/Auth";
+
+// // --- UTILITY HOOKS ---
+
+// // 1. Intersection Observer Hook (To trigger animations on scroll)
+
+// // 2. Count-Up Animation Hook (For the stats section)
+
+// // --- UI COMPONENTS ---
+
+// // 1. Animated Fade-In Element
+
+// // 2. Animated Route Network Background (Updated for Light Theme)
+// // const RouteNetworkCanvas: FC = () => {
+// //   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+// //   useEffect(() => {
+// //     const canvas = canvasRef.current;
+// //     if (!canvas) return;
+// //     const ctx = canvas.getContext("2d");
+// //     if (!ctx) return;
+
+// //     let points: { x: number; y: number }[] = [];
+// //     let movingDots: { from: number; to: number; progress: number }[] = [];
+// //     const pointCount = 30;
+// //     const dotCount = 15;
+
+// //     const resizeCanvas = () => {
+// //       canvas.width = window.innerWidth;
+// //       canvas.height = document.documentElement.scrollHeight;
+// //     };
+
+// //     const createNetwork = () => {
+// //       points = [];
+// //       for (let i = 0; i < pointCount; i++) {
+// //         points.push({
+// //           x: Math.random() * canvas.width,
+// //           y: Math.random() * canvas.height,
+// //         });
+// //       }
+// //       movingDots = [];
+// //       for (let i = 0; i < dotCount; i++) {
+// //         const from = Math.floor(Math.random() * pointCount);
+// //         let to = Math.floor(Math.random() * pointCount);
+// //         while (to === from) {
+// //           to = Math.floor(Math.random() * pointCount);
+// //         }
+// //         movingDots.push({ from, to, progress: Math.random() });
+// //       }
+// //     };
+
+// //     const animate = () => {
+// //       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// //       points.forEach((p1) => {
+// //         points.forEach((p2) => {
+// //           const distance = Math.sqrt(
+// //             Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)
+// //           );
+// //           if (distance < 250) {
+// //             ctx.beginPath();
+// //             ctx.moveTo(p1.x, p1.y);
+// //             ctx.lineTo(p2.x, p2.y);
+// //             ctx.strokeStyle = "rgba(203, 213, 225, 0.4)"; // Lighter slate color for light bg
+// //             ctx.stroke();
+// //           }
+// //         });
+// //       });
+
+// //       points.forEach((p) => {
+// //         ctx.beginPath();
+// //         ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+// //         ctx.fillStyle = "rgba(56, 189, 248, 0.5)"; // Light blue
+// //         ctx.fill();
+// //       });
+
+// //       movingDots.forEach((dot) => {
+// //         dot.progress += 0.002;
+// //         if (dot.progress >= 1) {
+// //           dot.progress = 0;
+// //           dot.from = Math.floor(Math.random() * pointCount);
+// //           dot.to = Math.floor(Math.random() * pointCount);
+// //         }
+// //         const fromPoint = points[dot.from];
+// //         const toPoint = points[dot.to];
+// //         const x = fromPoint.x + (toPoint.x - fromPoint.x) * dot.progress;
+// //         const y = fromPoint.y + (toPoint.y - fromPoint.y) * dot.progress;
+
+// //         ctx.beginPath();
+// //         ctx.arc(x, y, 4, 0, Math.PI * 2);
+// //         ctx.fillStyle = "#10b981"; // Emerald green
+// //         ctx.fill();
+// //       });
+
+// //       requestAnimationFrame(animate);
+// //     };
+
+// //     window.addEventListener("resize", resizeCanvas);
+// //     resizeCanvas();
+// //     createNetwork();
+// //     animate();
+
+// //     return () => window.removeEventListener("resize", resizeCanvas);
+// //   }, []);
+
+// //   return (
+// //     <canvas
+// //       ref={canvasRef}
+// //       className="fixed top-0 left-0 w-full h-full z-0 opacity-50"
+// //     />
+// //   );
+// // };
+
+// // --- DATA & SVG Icons ---
+
+// const Icons = {
+//   route: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="M2 12a10 10 0 1 0 20 0 10 10 0 1 0-20 0" />
+//       <path d="M12 18a6 6 0 1 0 0-12 6 6 0 1 0 0 12z" />
+//       <path d="M12 12v6" />
+//       <path d="M12 6V3" />
+//       <path d="M12 21v-3" />
+//       <path d="M18 12h3" />
+//       <path d="M3 12h3" />
+//     </svg>
+//   ),
+//   community: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+//       <circle cx="9" cy="7" r="4" />
+//       <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+//       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+//     </svg>
+//   ),
+//   tracking: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+//       <circle cx="12" cy="10" r="3" />
+//     </svg>
+//   ),
+//   rewards: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.685a.5.5 0 0 0-.6 0l-3.58 2.685a.5.5 0 0 1-.81-.47L9.523 12.89l-5.3-4.12a.5.5 0 0 1 .292-.864l8.345-1.213a.5.5 0 0 0 .472-.334l3.737-7.62a.5.5 0 0 1 .882 0l3.737 7.62a.5.5 0 0 0 .472.334l8.345 1.213a.5.5 0 0 1 .292.864l-5.3 4.12z" />
+//     </svg>
+//   ),
+//   carbon: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+//       <path d="M12 12c-3 3-6-3-6-3s3-6 6-3zm0 0c3-3 6 3 6 3s-3 6-6 3z" />
+//     </svg>
+//   ),
+//   scheduling: (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="M5 22h14" />
+//       <path d="M5 2h14" />
+//       <path d="M17 2v20" />
+//       <path d="M7 2v20" />
+//       <path d="M12 2v4" />
+//       <path d="M12 22v-4" />
+//       <path d="M12 8v8" />
+//     </svg>
+//   ),
+// };
+
+// interface HomePageProps {
+//   setCurrentPage: (page: string) => void;
+// }
+// // --- MAIN APP COMPONENT ---
+// const HomePage1: React.FC<HomePageProps> = ({ setCurrentPage }) => {
+//   const handleLaunchApp = () => alert("Launching the main application...");
+//   const { user, userProfile, loading } = useAuth();
+//   const handleGoToDashboard = () => {
+//     if (userProfile?.role === "volunteer") setCurrentPage("volunteerDashboard");
+//     if (userProfile?.role === "recipient") setCurrentPage("recipientDashboard");
+//     if (userProfile?.role === "storeAssociate")
+//       setCurrentPage("storeAssociateDashboard");
+//   };
+
+//   const styles = `
+//       body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #334155; scroll-behavior: smooth; }
+//     `;
+
+//   return (
+//     <div className="antialiased">
+//       <style>{styles}</style>
+//       <Header onLaunchApp={handleLaunchApp} />
+//       <main className="bg-slate-50">
+//         {/* <RouteNetworkCanvas /> */}
+//         <HeroSection onLaunchApp={handleLaunchApp} />
+//         <StatsSection />
+
+//         {/* --- HOW IT WORKS TIMELINE --- */}
+//         <section id="how-it-works" className="py-20 sm:py-32 px-6 bg-white">
+//           <div className="container mx-auto">
+//             <FadeIn>
+//               <div className="text-center max-w-3xl mx-auto mb-20">
+//                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+//                   Get Started in Minutes
+//                 </h2>
+//                 <p className="text-lg text-slate-600 mt-4">
+//                   A seamless journey from request to reward.
+//                 </p>
+//               </div>
+//             </FadeIn>
+//             <div className="relative max-w-4xl mx-auto">
+//               <div
+//                 className="absolute left-4 md:left-1/2 -translate-x-1/2 w-0.5 h-full bg-slate-200"
+//                 aria-hidden="true"
+//               ></div>
+
+//               {howItWorksSteps.map((step, index) => (
+//                 <div
+//                   key={index}
+//                   className="relative pl-12 md:pl-0 mb-16 last:mb-0"
+//                 >
+//                   <div className="md:grid md:grid-cols-2 md:gap-16 items-center">
+//                     <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 border-2 border-sky-500 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+//                       <div className="text-sky-600 font-bold">{step.step}</div>
+//                     </div>
+//                     <div
+//                       className={`absolute md:hidden top-0 left-0 w-8 h-8 flex items-center justify-center -translate-x-1/2 rounded-full bg-slate-100 border-2 border-sky-500`}
+//                     >
+//                       <div className="text-sky-600 font-bold">{step.step}</div>
+//                     </div>
+//                     <FadeIn
+//                       direction={index % 2 === 0 ? "right" : "left"}
+//                       className={`text-left ${
+//                         index % 2 === 1 ? "md:col-start-2" : "md:text-right"
+//                       }`}
+//                     >
+//                       <h3 className="text-2xl font-bold text-slate-900 mb-3">
+//                         {step.title}
+//                       </h3>
+//                       <p className="text-slate-600">{step.description}</p>
+//                     </FadeIn>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </section>
+
+//         {/* --- WHY CHOOSE US / FEATURES SECTION --- */}
+//         <section id="features" className="py-20 sm:py-32 px-6 bg-slate-50">
+//           <div className="container mx-auto">
+//             <FadeIn>
+//               <div className="text-center max-w-3xl mx-auto mb-16">
+//                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+//                   Why Choose Our Platform?
+//                 </h2>
+//                 <p className="text-lg text-slate-600 mt-4">
+//                   Built on a foundation of technology, sustainability, and
+//                   community.
+//                 </p>
+//               </div>
+//             </FadeIn>
+//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+//               {features.map((feature, index) => (
+//                 <FadeIn
+//                   key={index}
+//                   delay={150 * index}
+//                   className="p-8 bg-white border border-slate-200 rounded-2xl text-center shadow-sm"
+//                 >
+//                   <div className="mb-6 inline-block bg-sky-100 p-4 rounded-full text-sky-600">
+//                     {Icons[feature.icon as keyof typeof Icons]}
+//                   </div>
+//                   <h3 className="text-xl font-bold text-slate-900 mb-3">
+//                     {feature.title}
+//                   </h3>
+//                   <p className="text-slate-600 leading-relaxed">
+//                     {feature.description}
+//                   </p>
+//                 </FadeIn>
+//               ))}
+//             </div>
+//           </div>
+//         </section>
+
+//         {/* --- TESTIMONIALS SECTION --- */}
+//         <section id="testimonials" className="py-20 sm:py-32 px-6 bg-white">
+//           <div className="container mx-auto">
+//             <FadeIn>
+//               <div className="text-center max-w-3xl mx-auto mb-16">
+//                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+//                   Powered by People Like You
+//                 </h2>
+//                 <p className="text-lg text-slate-600 mt-4">
+//                   Real stories from the heart of our community.
+//                 </p>
+//               </div>
+//             </FadeIn>
+//             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+//               {testimonials.map((testimonial, index) => (
+//                 <FadeIn
+//                   key={index}
+//                   delay={150 * index}
+//                   className="bg-slate-50 border border-slate-200 rounded-2xl p-8 flex flex-col items-center text-center"
+//                 >
+//                   <div className="text-5xl mb-4">{testimonial.avatar}</div>
+//                   <p className="text-slate-600 mb-6 italic">
+//                     "{testimonial.content}"
+//                   </p>
+//                   <div className="mt-auto border-t border-slate-200 pt-4 w-full">
+//                     <h4 className="font-bold text-slate-800">
+//                       {testimonial.name}
+//                     </h4>
+//                     <p className="text-sky-600 text-sm">{testimonial.role}</p>
+//                   </div>
+//                 </FadeIn>
+//               ))}
+//             </div>
+//           </div>
+//         </section>
+
+//         {/* --- CTA Section --- */}
+//         <section className="py-20 sm:py-32 text-center px-6 bg-gradient-to-br from-sky-100 via-white to-green-100">
+//           <div className="container mx-auto">
+//             <FadeIn>
+//               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
+//                 Ready to Transform Delivery?
+//               </h2>
+//               <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+//                 Join thousands of community members already making a positive
+//                 impact.
+//               </p>
+//               <button
+//                 onClick={handleLaunchApp}
+//                 className="bg-sky-600 hover:bg-sky-700 text-white font-bold text-lg px-10 py-4 rounded-xl transition shadow-lg shadow-sky-500/20"
+//               >
+//                 Start Your Journey Today 🚀
+//               </button>
+//             </FadeIn>
+//           </div>
+//         </section>
+//       </main>
+//       <Footer onLaunchApp={handleLaunchApp} />
+//     </div>
+//   );
+// };
+
+// export default HomePage1;

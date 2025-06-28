@@ -73,20 +73,68 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // const signUp = async (
+  //   email: string,
+  //   password: string,
+  //   name: string,
+  //   role: UserRole
+  // ) => {
+  //   setLoading(true);
+  //   try {
+  //     const userCredential = await createUserWithEmailAndPassword(
+  //       auth,
+  //       email,
+  //       password
+  //     );
+  //     const newUser = userCredential.user;
+  //     const userProfileData: UserProfile = {
+  //       uid: newUser.uid,
+  //       email: newUser.email || email,
+  //       name,
+  //       role,
+  //       isVerified: false,
+  //     };
+  //     await setDoc(
+  //       doc(
+  //         db,
+  //         `artifacts/${appId}/users/${newUser.uid}/userProfile`,
+  //         "profile"
+  //       ),
+  //       userProfileData
+  //     );
+  //     setUserProfile(userProfileData);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // In src/context/AuthContext.tsx
+
   const signUp = async (
     email: string,
     password: string,
     name: string,
     role: UserRole
   ) => {
-    setLoading(true);
+    // We wrap the entire process in a single try...catch block
     try {
+      setLoading(true);
+      console.log("--- Starting Sign-Up Process ---");
+
+      // === Part 1: Firebase Authentication ===
+      console.log("Step 1: Attempting to create user in Firebase Auth...");
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const newUser = userCredential.user;
+      console.log(
+        "Step 2: SUCCESS - User created in Auth with UID:",
+        newUser.uid
+      );
+
+      // === Part 2: Firestore Database Write ===
       const userProfileData: UserProfile = {
         uid: newUser.uid,
         email: newUser.email || email,
@@ -94,20 +142,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         role,
         isVerified: false,
       };
-      await setDoc(
-        doc(
-          db,
-          `artifacts/${appId}/users/${newUser.uid}/userProfile`,
-          "profile"
-        ),
-        userProfileData
+
+      const profilePath = `artifacts/${appId}/users/${newUser.uid}/userProfile/profile`;
+      console.log(
+        `Step 3: Attempting to write profile data to Firestore at path: ${profilePath}`
       );
+      console.log("Data to be written:", userProfileData);
+
+      const profileDocRef = doc(db, profilePath);
+      await setDoc(profileDocRef, userProfileData);
+
+      console.log(
+        "Step 4: SUCCESS - User profile document created in Firestore!"
+      );
+
+      // If successful, update the app's state
       setUserProfile(userProfileData);
+    } catch (error) {
+      // This block will execute if ANY of the "await" calls fail.
+      console.error("--- SIGN-UP FAILED ---");
+      console.error(
+        "An error occurred during the sign-up process. Please see the details below."
+      );
+
+      // The error object from Firebase contains a 'code' and 'message' property
+      // which are very helpful for debugging.
+      console.error("Firebase Error Code:", (error as any).code);
+      console.error("Firebase Error Message:", (error as any).message);
+
+      alert(
+        "Signup failed! Please check the developer console for the detailed error message."
+      );
+
+      // We still throw the error so the UI can handle it if needed
+      throw error;
     } finally {
+      console.log("--- Finished Sign-Up Process ---");
       setLoading(false);
     }
   };
-
   const handleSignOut = async () => {
     setLoading(true);
     try {
