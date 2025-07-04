@@ -359,79 +359,64 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
     `;
 
   return (
-    <div className="min-h-full">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-green-800 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-10 w-24 h-24 bg-green-300 rounded-full blur-lg animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-blue-300 rounded-full blur-md animate-pulse delay-500"></div>
-        </div>
-        
-        <div className="relative max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-blue-100 to-green-100 bg-clip-text text-transparent">
-            Sustainable Last-Mile Delivery
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed">
-            Revolutionizing delivery through community power, cutting-edge technology, and environmental responsibility
-          </p>
-          
-          {loading ? (
-            <div className="inline-flex items-center space-x-2 text-blue-200">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-              <span className="text-lg">Loading your personalized experience...</span>
-            </div>
-          ) : user && !user.isAnonymous ? (
-            <div className="space-y-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                <p className="text-2xl font-semibold text-blue-100 mb-4">
-                  Welcome back, {userProfile?.role}! 🎉
-                </p>
-                <Button 
-                  onClick={handleGoToDashboard}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-                >
-                  Access Your Dashboard →
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-              <Button 
-                onClick={() => setCurrentPage("login")}
-                className="bg-blue text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
-                Sign In to Continue
-              </Button>
-              <Button
-                onClick={() => setCurrentPage("register")}
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
-                Join Our Community 🚀
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
+    <div className="antialiased">
+      <style>{styles}</style>
+      <Header handleGoToDashboard={handleGoToDashboard} />
+      <main className="bg-slate-50 w-full">
+        {/* <RouteNetworkCanvas /> */}
+        <HeroSection handleGoToDashboard={handleGoToDashboard} />
+        <StatsSection />
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-6 transform group-hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-                  <div className="text-3xl md:text-4xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
-                </div>
+        {/* --- HOW IT WORKS TIMELINE --- */}
+        <section id="how-it-works" className="py-20 sm:py-32 px-6 bg-white">
+          <div className="container mx-auto">
+            <FadeIn>
+              <div className="text-center max-w-3xl mx-auto mb-20">
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+                  Get Started in Minutes
+                </h2>
+                <p className="text-lg text-slate-600 mt-4">
+                  A seamless journey from request to reward.
+                </p>
               </div>
-            ))}
+            </FadeIn>
+            <div className="relative max-w-4xl mx-auto">
+              <div
+                className="absolute left-4 md:left-1/2 -translate-x-1/2 w-0.5 h-full bg-slate-200"
+                aria-hidden="true"
+              ></div>
+
+              {howItWorksSteps.map((step, index) => (
+                <div
+                  key={index}
+                  className="relative pl-12 md:pl-0 mb-16 last:mb-0"
+                >
+                  <div className="md:grid md:grid-cols-2 md:gap-16 items-center">
+                    <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 border-2 border-sky-500 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                      <div className="text-sky-600 font-bold">{step.step}</div>
+                    </div>
+                    <div
+                      className={`absolute md:hidden top-0 left-0 w-8 h-8 flex items-center justify-center -translate-x-1/2 rounded-full bg-slate-100 border-2 border-sky-500`}
+                    >
+                      <div className="text-sky-600 font-bold">{step.step}</div>
+                    </div>
+                    <FadeIn
+                      direction={index % 2 === 0 ? "right" : "left"}
+                      className={`text-left ${
+                        index % 2 === 1 ? "md:col-start-2" : "md:text-right"
+                      }`}
+                    >
+                      <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                        {step.title}
+                      </h3>
+                      <p className="text-slate-600">{step.description}</p>
+                    </FadeIn>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
         {/* --- WHY CHOOSE US / FEATURES SECTION --- */}
         <section id="features" className="py-20 sm:py-32 px-6 bg-slate-50">
