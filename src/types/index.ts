@@ -1,4 +1,5 @@
 import type{ User } from 'firebase/auth';
+import type { Timestamp } from 'firebase/firestore';
 
 export type UserRole = 'volunteer' | 'recipient' | 'storeAssociate';
 
@@ -41,7 +42,15 @@ export interface Package {
   status: "pending" | "assigned" | "delivered";
 
   createdAt: FirestoreTimestamp;
-  deliveryTime?: FirestoreTimestamp;
+  deliveryTime?: Date | Timestamp; // Used for actual delivered timestamp
+  assignedVolunteerName?: string;
+  assignedVolunteerPhone?: string; // Ensure this field exists for direct call
+  assignedAt?: Date | Timestamp;
+  inTransitAt?: Date | Timestamp;
+  cancelledAt?: Date | Timestamp;
+  notesFromRecipient?: string; // New: For recipient-added notes/instructions
+  notesFromVolunteer?: string; // New: For volunteer-added notes (e.g., "Left at porch")
+  proofOfDeliveryUrl?: string; 
 }
 
 
