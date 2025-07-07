@@ -8,21 +8,17 @@ import FormTextarea from "../components/form/FormTextarea";
 import FormSelect from "../components/form/FormSelect";
 import FormButton from "../components/form/FormButton";
 
-interface RegisterPageProps {
-  setCurrentPage: (page: string) => void;
-}
 
 const RegisterPage: FC<{ onSwitchToLogin: () => void }> = ({
   onSwitchToLogin,
 }) => {
-  const { signUp, loading } = useAuth();
+  const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("recipient");
   const [bio, setBio] = useState("");
   const [error, setError] = useState("");
-  const [showRoleModal, setShowRoleModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

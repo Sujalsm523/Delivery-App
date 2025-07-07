@@ -1,4 +1,4 @@
-import React, { type FC, type InputHTMLAttributes } from "react";
+import { type FC, type InputHTMLAttributes } from "react";
 
 const FormInput: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => (
   <input

@@ -1,4 +1,4 @@
-import React, { type FC, type SelectHTMLAttributes } from "react";
+import { type FC, type SelectHTMLAttributes } from "react";
 
 const FormSelect: FC<SelectHTMLAttributes<HTMLSelectElement>> = (props) => (
   <div className="relative">

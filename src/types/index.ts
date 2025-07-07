@@ -28,21 +28,26 @@ export interface Package {
   senderEmail: string;
   assignedVolunteerId: string | null;
   assignedVolunteerEmail?: string; // Optional; present when assigned
-
+   recipientId:string;
+  recipientEmail: string;
+  recipientName: string;
+  priority?: "high" | "medium" | "low" | string;
   pickupLocation: string;
   deliveryLocation: string;
-
+estimatedTime?: string; 
   pickupCoords: Coordinates;
   deliveryCoords: Coordinates;
-
+distance?: string;
+deliveryTime?: string; // Estimated delivery time in HH:MM format
+  estimatedDistance?: string; // Estimated distance in km or miles
   size: "Small" | "Medium" | "Large";
 
   description: string;
 
-  status: "pending" | "assigned" | "delivered";
+  status: "pending" | "assigned" | "inTransit" | "delivered" | "cancelled";
 
   createdAt: FirestoreTimestamp;
-  deliveryTime?: Date | Timestamp; // Used for actual delivered timestamp
+  // deliveryTime?: Date | Timestamp; // Used for actual delivered timestamp
   assignedVolunteerName?: string;
   assignedVolunteerPhone?: string; // Ensure this field exists for direct call
   assignedAt?: Date | Timestamp;

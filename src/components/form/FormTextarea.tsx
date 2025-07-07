@@ -1,4 +1,4 @@
-import React, { type FC, type TextareaHTMLAttributes } from "react";
+import { type FC, type TextareaHTMLAttributes } from "react";
 
 const FormTextarea: FC<TextareaHTMLAttributes<HTMLTextAreaElement>> = (
   props

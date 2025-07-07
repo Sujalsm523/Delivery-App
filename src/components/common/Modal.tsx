@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import FadeIn from "./FadeIn";
 import FormCard from "../form/FormCard";
 
@@ -11,6 +11,14 @@ const Modal: FC<ModalProps> = ({ children, onClose }) => (
   <div
     className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4"
     onClick={onClose}
+    role="button"
+    tabIndex={0}
+    aria-label="Close modal"
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+        onClose();
+      }
+    }}
   >
     <div
       className="relative w-full max-w-lg"

@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from "react";
+import { type FC, type ReactNode } from "react";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 interface FadeInProps {

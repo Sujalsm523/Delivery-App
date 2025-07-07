@@ -65,7 +65,7 @@ const RecipientDashboard: React.FC = () => {
   const { user, userProfile, loading } = useAuth();
   const [pickupLocation, setPickupLocation] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("");
-  const [size, setSize] = useState<Package["size"]>("small"); // Default to 'small'
+  const [size, setSize] = useState<Package["size"]>("Small"); // Default to 'small'
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
   const [packages, setPackages] = useState<Package[]>([]);
@@ -87,25 +87,19 @@ const RecipientDashboard: React.FC = () => {
         (snapshot) => {
           const fetchedPackages = snapshot.docs.map((doc) => {
             const data = doc.data();
+            // Helper to convert FirestoreTimestamp-like objects to Date
+            const toDateSafe = (val: any) => {
+              if (val instanceof Timestamp) return val.toDate();
+              if (val && typeof val.toDate === "function") return val.toDate();
+              return val;
+            };
             return {
               ...data,
               id: doc.id,
-              createdAt:
-                data.createdAt instanceof Timestamp
-                  ? data.createdAt.toDate()
-                  : data.createdAt,
-              assignedAt:
-                data.assignedAt instanceof Timestamp
-                  ? data.assignedAt.toDate()
-                  : data.assignedAt,
-              inTransitAt:
-                data.inTransitAt instanceof Timestamp
-                  ? data.inTransitAt.toDate()
-                  : data.inTransitAt,
-              deliveryTime: // This is the deliveredAt timestamp
-                data.deliveryTime instanceof Timestamp
-                  ? data.deliveryTime.toDate()
-                  : data.deliveryTime,
+              createdAt: toDateSafe(data.createdAt),
+              assignedAt: toDateSafe(data.assignedAt),
+              inTransitAt: toDateSafe(data.inTransitAt),
+              deliveryTime: toDateSafe(data.deliveryTime),
             } as Package;
           });
           setPackages(fetchedPackages);
@@ -126,63 +120,54 @@ const RecipientDashboard: React.FC = () => {
     };
   }, [user, userProfile]);
 
-  const handleCreatePackage = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!user || !user.email) {
-      setMessage({
-        type: "error",
-        text: "You must be logged in to create a package.",
-      });
-      return;
-    }
+// RecipientDashboard.tsx
 
-    setMessage(null);
-    setIsSubmitting(true);
+// Inside your handleCreatePackage function:
+const handleCreatePackage = async (event: FormEvent) => {
+  event.preventDefault();
+  if (!user || !userProfile) {
+    setMessage({ type: "error", text: "You must be logged in to create a package." });
+    return;
+  }
+  setIsSubmitting(true);
+  setMessage(null);
 
-    try {
-      const newPackageData = {
-        senderId: user.uid,
-        senderEmail: user.email,
-        pickupLocation,
-        deliveryLocation,
-        size,
-        description,
-        status: "pending" as const,
-        createdAt: Timestamp.now(),
-        // notesFromRecipient: "Example note from recipient, if you implement input for this", // Example
-      };
+  try {
+    const newPackageData = {
+      senderId: user.uid,
+      senderEmail: user.email,
+      recipientId: user.uid, // <--- ADD THIS LINE
+      pickupLocation,
+      deliveryLocation,
+      size,
+      description,
+      status: "pending" as const,
+      createdAt: Timestamp.now(),
+    };
 
-      const publicPath = firestoreService.getCollectionPath("packages");
-      const publicDocRef = await addDoc(
-        collection(db, publicPath),
-        newPackageData
-      );
+    // Add to public collection
+    const publicPath = firestoreService.getCollectionPath("packages");
+    const publicDocRef = await addDoc(
+      collection(db, publicPath),
+      newPackageData
+    );
 
-      const privatePath = firestoreService.getCollectionPath(
-        "packages",
-        user.uid
-      );
-      await setDoc(doc(db, privatePath, publicDocRef.id), newPackageData);
+    // Add to sender's private collection (which is the recipient in this case)
+    const privatePath = firestoreService.getCollectionPath(
+      "packages",
+      user.uid // This user.uid is the sender's UID (the recipient who created it)
+    );
+    await setDoc(doc(db, privatePath, publicDocRef.id), newPackageData);
 
-      setMessage({
-        type: "success",
-        text: "Package request submitted successfully! Volunteers will be notified.",
-      });
-      // Clear form
-      setPickupLocation("");
-      setDeliveryLocation("");
-      setDescription("");
-      setSize("small");
-    } catch (error: any) {
-      console.error("Error creating package:", error);
-      setMessage({
-        type: "error",
-        text: "Failed to create package: " + error.message,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setMessage({ type: "success", text: "Package request created successfully!" });
+    // ... reset form fields and other logic
+  } catch (error: any) {
+    console.error("Error creating package:", error);
+    setMessage({ type: "error", text: "Failed to create package: " + error.message });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleCancelPackage = async (packageId: string) => {
     if (!user) {
@@ -591,7 +576,7 @@ const RecipientDashboard: React.FC = () => {
 
         {/* Cancel Confirmation Modal */}
         {showCancelConfirm && (
-          <div className="fixed inset-0 bg-transparent bg-opacity-40 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full text-center">
               <XCircle className="text-red-500 mx-auto mb-4" size={48} />
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Confirm Cancellation</h3>

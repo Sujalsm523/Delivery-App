@@ -5,14 +5,11 @@ import FormCard from "../components/form/FormCard";
 import FormInput from "../components/form/FormInput";
 import FormButton from "../components/form/FormButton";
 
-interface LoginPageProps {
-  setCurrentPage: (page: string) => void;
-}
 
 const LoginPage: FC<{ onSwitchToRegister: () => void }> = ({
   onSwitchToRegister,
 }) => {
-  const { signIn, loading } = useAuth();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
