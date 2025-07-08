@@ -12,85 +12,95 @@ import Card from "./components/Card";
 import { seedDatabase } from "./services/seedData";
 import "./App.css";
 
+
+type page =
+  | "landing"
+  | "login"
+  | "register"
+  | "recipientDashboard"
+  | "volunteerDashboard"
+  | "storeAssociateDashboard";
+
 function App() {
-  const [currentPage, setCurrentPage] = useState("home");
+  // Start the user on the landing page
+  const [currentPage, setCurrentPage] = useState<page>("landing");
   const { user, userProfile, loading } = useAuth();
 
-  // This effect handles navigation after login/logout
+  // This powerful hook handles all automatic redirection
   useEffect(() => {
-  if (loading) return;
+    // Don't do anything until Firebase has confirmed the auth state
+    if (loading) {
+      return;
+    }
 
-  if (user && !user.isAnonymous && userProfile) {
-    // Auto-redirect only from the home page
-    if (currentPage === "home") {
-      if (userProfile.role === "recipient") setCurrentPage("recipientDashboard");
-      else if (userProfile.role === "volunteer") setCurrentPage("volunteerDashboard");
-      else if (userProfile.role === "storeAssociate") setCurrentPage("storeAssociateDashboard");
+    // CASE 1: User is logged in and has a profile
+    if (user && !user.isAnonymous && userProfile) {
+      console.log(
+        `User logged in. Role: ${userProfile.role}. Redirecting to dashboard.`
+      );
+      // Redirect to the correct dashboard based on their role
+      if (userProfile.role === "recipient") {
+        setCurrentPage("recipientDashboard");
+      } else if (userProfile.role === "volunteer") {
+        setCurrentPage("volunteerDashboard");
+      } else if (userProfile.role === "storeAssociate") {
+        setCurrentPage("storeAssociateDashboard");
+      }
     }
-  } else if (!user || user.isAnonymous) {
-    if (currentPage !== "login" && currentPage !== "register") {
-      setCurrentPage("home");
+    // CASE 2: User is logged out OR is a guest
+    else {
+      // If the user is currently on an authenticated page (like a dashboard) and they log out,
+      // this will redirect them back to the landing page.
+      if (
+        currentPage !== "login" &&
+        currentPage !== "register" &&
+        currentPage !== "landing"
+      ) {
+        console.log(
+          "User logged out or has no profile. Redirecting to landing page."
+        );
+        setCurrentPage("landing");
+      }
     }
-  }
-}, [user, userProfile, loading, currentPage]);
+  }, [user, userProfile, loading, currentPage]);
 
   const renderPage = () => {
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <Card>Loading Application...</Card>
-        </div>
-      );
+    // The landing, login, and register pages have their own full-screen layout
+    if (currentPage === "landing") {
+      // Pass setCurrentPage so the landing page can navigate to login/register
+      return <HomePage setCurrentPage={setCurrentPage} />;
+    }
+    if (currentPage === "login") {
+      return <LoginPage setCurrentPage={setCurrentPage} />;
+    }
+    if (currentPage === "register") {
+      return <RegisterPage setCurrentPage={setCurrentPage} />;
     }
 
+    // All other pages are "inside" the main app layout with the header
+    let dashboardContent;
     switch (currentPage) {
-      case "login":
-        return (
-          <LoginPage onSwitchToRegister={() => setCurrentPage("register")} />
-        );
-      case "register":
-        return <RegisterPage onSwitchToLogin={() => setCurrentPage("login")} />;
       case "recipientDashboard":
-        return userProfile?.role === "recipient" ? (
-          <RecipientDashboard />
-        ) : (
-          <HomePage setCurrentPage={setCurrentPage} />
-        );
+        dashboardContent = <RecipientDashboard />;
+        break;
       case "volunteerDashboard":
-        return userProfile?.role === "volunteer" ? (
-          <VolunteerDashboard />
-        ) : (
-          <HomePage setCurrentPage={setCurrentPage} />
-        );
+        dashboardContent = <VolunteerDashboard />;
+        break;
       case "storeAssociateDashboard":
-        return userProfile?.role === "storeAssociate" ? (
-          <StoreAssociateDashboard />
-        ) : (
-          <HomePage setCurrentPage={setCurrentPage} />
-        );
-      case "home":
+        dashboardContent = <StoreAssociateDashboard />;
+        break;
       default:
-        return <HomePage setCurrentPage={setCurrentPage} />;
+        // Fallback for any unexpected state
+        dashboardContent = <div>Page not found</div>;
     }
+
+    return (
+      <Layout setCurrentPage={setCurrentPage}>
+        {loading ? <Card>Loading...</Card> : dashboardContent}
+      </Layout>
+    );
   };
 
-  return (
-    <Layout setCurrentPage={setCurrentPage}>
-      {/* --- Add this temporary button for development --- */}
-      {import.meta.env.DEV && (
-        <div className="fixed bottom-4 left-4 z-50">
-          <button
-            onClick={seedDatabase}
-            className="bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg font-semibold hover:bg-yellow-500"
-          >
-            Seed Database
-          </button>
-        </div>
-      )}
-      {/* ------------------------------------------- */}
-      {renderPage()}
-    </Layout>
-  );
+  return <>{renderPage()}</>;
 }
-
 export default App;
