@@ -13,7 +13,7 @@ import { seedDatabase } from "./services/seedData";
 import "./App.css";
 
 
-type page =
+type Page =
   | "landing"
   | "login"
   | "register"
@@ -22,62 +22,50 @@ type page =
   | "storeAssociateDashboard";
 
 function App() {
-  // Start the user on the landing page
-  const [currentPage, setCurrentPage] = useState<page>("landing");
+  const [currentPage, setCurrentPage] = useState<Page>("landing");
   const { user, userProfile, loading } = useAuth();
 
-  // This powerful hook handles all automatic redirection
+  // Automatically redirect based on login status and role
   useEffect(() => {
-    // Don't do anything until Firebase has confirmed the auth state
-    if (loading) {
-      return;
-    }
+    if (loading) return;
 
-    // CASE 1: User is logged in and has a profile
+    // If user is logged in and profile is loaded
     if (user && !user.isAnonymous && userProfile) {
-      console.log(
-        `User logged in. Role: ${userProfile.role}. Redirecting to dashboard.`
-      );
-      // Redirect to the correct dashboard based on their role
-      if (userProfile.role === "recipient") {
-        setCurrentPage("recipientDashboard");
-      } else if (userProfile.role === "volunteer") {
-        setCurrentPage("volunteerDashboard");
-      } else if (userProfile.role === "storeAssociate") {
-        setCurrentPage("storeAssociateDashboard");
+      console.log(`User logged in. Role: ${userProfile.role}. Redirecting to dashboard.`);
+      switch (userProfile.role) {
+        case "recipient":
+          setCurrentPage("recipientDashboard");
+          break;
+        case "volunteer":
+          setCurrentPage("volunteerDashboard");
+          break;
+        case "storeAssociate":
+          setCurrentPage("storeAssociateDashboard");
+          break;
+        default:
+          setCurrentPage("landing");
       }
-    }
-    // CASE 2: User is logged out OR is a guest
-    else {
-      // If the user is currently on an authenticated page (like a dashboard) and they log out,
-      // this will redirect them back to the landing page.
+    } else {
+      // User is logged out or a guest, ensure safe redirect
       if (
         currentPage !== "login" &&
         currentPage !== "register" &&
         currentPage !== "landing"
       ) {
-        console.log(
-          "User logged out or has no profile. Redirecting to landing page."
-        );
+        console.log("User logged out or has no profile. Redirecting to landing page.");
         setCurrentPage("landing");
       }
     }
-  }, [user, userProfile, loading, currentPage]);
+  }, [user, userProfile, loading]);
 
+  // Render current page
   const renderPage = () => {
-    // The landing, login, and register pages have their own full-screen layout
-    if (currentPage === "landing") {
-      // Pass setCurrentPage so the landing page can navigate to login/register
-      return <HomePage setCurrentPage={setCurrentPage} />;
-    }
-    if (currentPage === "login") {
-      return <LoginPage setCurrentPage={setCurrentPage} />;
-    }
-    if (currentPage === "register") {
-      return <RegisterPage setCurrentPage={setCurrentPage} />;
-    }
+    // Landing, Login, and Register are full-screen
+    if (currentPage === "landing") return <HomePage setCurrentPage={setCurrentPage} />;
+    if (currentPage === "login") return <LoginPage setCurrentPage={setCurrentPage} />;
+    if (currentPage === "register") return <RegisterPage setCurrentPage={setCurrentPage} />;
 
-    // All other pages are "inside" the main app layout with the header
+    // Dashboard pages inside main Layout
     let dashboardContent;
     switch (currentPage) {
       case "recipientDashboard":
@@ -90,7 +78,6 @@ function App() {
         dashboardContent = <StoreAssociateDashboard />;
         break;
       default:
-        // Fallback for any unexpected state
         dashboardContent = <div>Page not found</div>;
     }
 
@@ -103,4 +90,5 @@ function App() {
 
   return <>{renderPage()}</>;
 }
+
 export default App;
