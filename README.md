@@ -1,54 +1,70 @@
-# React + TypeScript + Vite
+# Sustainable Delivery 🚚🌱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A community-driven delivery platform that turns neighbors' regular errands into sustainable, rewarding opportunities to deliver packages.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 The Problem
 
-## Expanding the ESLint configuration
+Traditional last-mile delivery is inefficient, environmentally costly, and lacks community connection. It creates unnecessary traffic, carbon emissions, and high costs for single-purpose trips.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+##💡 Our Solution
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Sustainable Delivery solves this by creating a peer-to-peer network where verified local volunteers deliver packages along their existing routes. Our platform uses smart technology to match deliveries with volunteers, creating a system that is efficient, rewarding, and good for the planet.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ✨ Core Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Smart Matching:** An algorithm connects package requests with the most efficient volunteer routes.
+- **Real-time Tracking:** Live GPS tracking for all deliveries from store to door.
+- **Community Trust:** A robust verification and peer-to-peer rating system.
+- **Gamified Rewards:** Volunteers earn credits and unlock badges for successful deliveries.
+- **Impact Tracking:** Users can see their direct contribution to reducing carbon emissions.
+- **Flexible Scheduling:** Recipients can set preferred delivery windows.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## 🛠️ Tech Stack
+
+- **Frontend:** React, TypeScript, Vite
+- **Styling:** Tailwind CSS
+- **Backend & Database:** Firebase (Firestore, Authentication, Cloud Functions)
+- **Mapping:** Leaflet & React-Leaflet
+- **AI Features:** Gemini API
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- npm / yarn
+- Firebase CLI (`npm install -g firebase-tools`)
+
+### Installation
+
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+    cd your-repository-name
+    ```
+
+2.  **Install Dependencies:**
+    ```sh
+    npm install
+    ```
+
+3.  **Set up Firebase:**
+    - Create a project on the [Firebase Console](https://console.firebase.google.com/).
+    - Enable **Authentication** and **Firestore**.
+    - Create a `.env.local` file in the project root and add your Firebase config keys:
+      ```env
+      VITE_FIREBASE_CONFIG={"apiKey":"...","authDomain":"...","projectId":"..."}
+      ```
+
+4.  **Run the App:**
+    ```sh
+    npm run dev
+    ```
+    The application will be running on `http://localhost:5173`.
+
+---
+
+Built with ❤️ for the Walmart Converge Hackathon.
+
